@@ -42,4 +42,4 @@ Follow these steps to run the StudyMate mobile app locally.
 
 1. Clone this repository:
    ```bash
-   git clone [https://github.com/yourusername/studymate-mobile.git](https://github.com/yourusername/studymate-mobile.git)
+   git clone [https://github.com/yourusername/studymate-mobile.git](https://github.com/yourusername/nexmind.git)
