@@ -1,6 +1,6 @@
+import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
-import 'onboarding_screen.dart'; // Memanggil halaman tujuan
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -12,6 +12,7 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   late VideoPlayerController _controller;
   bool _isNavigating = false;
+  int _secretTapCount = 0; // Tambahan untuk secret tap admin
 
   @override
   void initState() {
@@ -33,13 +34,19 @@ class _SplashScreenState extends State<SplashScreen> {
           _controller.value.position >= _controller.value.duration) {
         _isNavigating = true; // Kunci agar tidak pindah layar berkali-kali
         
-        // 3. Pindah ke halaman Onboarding (menggunakan pushReplacement agar tidak bisa di-back)
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const OnboardingScreen()),
-        );
+        // Pindah ke halaman Onboarding menggunakan go_router
+        context.go('/onboarding');
       }
     });
+  }
+
+  void _handleSecretTap() {
+    _secretTapCount++;
+    if (_secretTapCount >= 5) {
+      _isNavigating = true;
+      _controller.pause();
+      context.go('/admin'); // Masuk ke admin mode!
+    }
   }
 
   @override
@@ -54,13 +61,17 @@ class _SplashScreenState extends State<SplashScreen> {
     return Scaffold(
       // Warna kuning latar belakang disesuaikan dengan warna background video
       backgroundColor: const Color(0xFFF1B000), 
-      body: Center(
-        child: _controller.value.isInitialized
-            ? AspectRatio(
-                aspectRatio: _controller.value.aspectRatio,
-                child: VideoPlayer(_controller),
-              )
-            : const SizedBox(), // Tampilkan layar kosong sekejap sambil memuat video
+      body: GestureDetector(
+        onTap: _handleSecretTap, // Deteksi ketukan rahasia
+        behavior: HitTestBehavior.opaque,
+        child: Center(
+          child: _controller.value.isInitialized
+              ? AspectRatio(
+                  aspectRatio: _controller.value.aspectRatio,
+                  child: VideoPlayer(_controller),
+                )
+              : const SizedBox(), // Tampilkan layar kosong sekejap sambil memuat video
+        ),
       ),
     );
   }

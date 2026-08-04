@@ -1,6 +1,7 @@
-// lib/main.dart
 import 'package:flutter/material.dart';
-import 'splash_screen.dart';
+import 'core/theme/app_theme.dart';
+import 'core/theme/theme_provider.dart';
+import 'app/router/app_router.dart';
 
 void main() {
   runApp(const StudyMateApp());
@@ -11,46 +12,18 @@ class StudyMateApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Nexmind',
-      builder: (context, child) {
-        final screenWidth = MediaQuery.of(context).size.width;
-        final isLargeScreen = screenWidth > 480;
-
-        return Container(
-          color: const Color(0xFFF0F0F0),
-          child: Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 480),
-              child: Container(
-                margin: EdgeInsets.symmetric(
-                  vertical: isLargeScreen ? 24.0 : 0.0,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(isLargeScreen ? 24.0 : 0.0),
-                  boxShadow: isLargeScreen
-                      ? [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
-                            blurRadius: 20,
-                            spreadRadius: 5,
-                            offset: const Offset(0, 10),
-                          ),
-                        ]
-                      : null,
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(isLargeScreen ? 24.0 : 0.0),
-                  child: child!,
-                ),
-              ),
-            ),
-          ),
+    return ValueListenableBuilder<ThemeMode>(
+      valueListenable: ThemeProvider.themeModeNotifier,
+      builder: (context, themeMode, child) {
+        return MaterialApp.router(
+          debugShowCheckedModeBanner: false,
+          title: 'Nexmind Admin',
+          theme: AppTheme.lightTheme,
+          darkTheme: AppTheme.darkTheme,
+          themeMode: themeMode,
+          routerConfig: appRouter,
         );
       },
-      home: const SplashScreen(),
     );
   }
 }
